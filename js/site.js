@@ -18,43 +18,74 @@ function init() {
 
 	var map = L.map('map', mapOptions);
 
-	gameLayersGroup = [];
+	games = [];
 
-	L.geoJson(geojson, { onEachFeature: onEachFeature });
+	L.geoJson(geojson, { 
+		onEachFeature: onEachFeature,
+		pointToLayer: function(feature, latlng) {
+			return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.8, color: '#4682b4'});
+		}
+	});
 	
+	// geojson styles
+	var styles = {
+		'color': '#4682b4',
+		'weight': 0
+	}
+
+	// feature looping and interaction
 	function onEachFeature(feature, layer) {
-    var gameGroup = gameLayersGroup[feature.properties.date];
-    if (gameGroup === undefined) {
-        gameGroup = new L.layerGroup();
-        gameLayersGroup[feature.properties.date] = gameGroup;
+    var gg = games[feature.properties.date];
+    if (gg === undefined) {
+        gg = new L.layerGroup();
+        games[feature.properties.date] = gg;
     }
-    gameGroup.addLayer(layer);
+    gg.addLayer(layer);
 
     var g = feature.properties;
     if (g && g.matchid) {
         layer.bindPopup(g.date + '<br><p><strong>' + g.teamA + '</strong> vs. <strong>' + g.teamB +'</strong></p>');
     }
 	}
+
+
+
+
 	var date = '6/12';
 	showLayer(date);
 
 	function showLayer(id) {
-		var game = gameLayersGroup[id];
+		var game = games[id];
 		map.addLayer(game);
+		for(key in game._layers) {
+			var d = game._layers[key].feature.properties;
+			var info = '';
+			info += '<div class="game" id="match-'+d['matchid']+'"><h4>Game '+d['matchid']+'</h4><p class="date">'+d.day+' '+d.date+' <span class="time">'+d.time+'</p>';
+			info += '</div>';
+			document.getElementById('info').innerHTML += info;
+			console.log(info);
+		}
+		// add layer properties to #info section
 	}
 	function hideLayer(id) {
-		var game = gameLayersGroup[id];
+		var game = games[id];
 		map.removeLayer(game);
+		document.getElementById('info').innerHTML = '';
 	}
 
+	// user interaction on date navigation
 	$('.date').click(function(){
 		if($(this).className=='active') {
 			// do nothing
 		} else {
+			// toggle menu classes
 			$('.date').removeClass('active');
 			$(this).toggleClass('active');
+			// remove current date layer
 			hideLayer(date);
+			// change date to the newly selected nav item
 			date = $(this).text();
+			// add the layer based off the 
 			showLayer(date);
 		}
 	});
