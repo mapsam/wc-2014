@@ -20,7 +20,7 @@
 	top:0px;
 	bottom:0;
 	left:300px;
-	width:100%;
+	right:0;
 }
 #dates {
 	position:fixed;
@@ -56,8 +56,8 @@
 	border-top:1px solid #e5e5e5;
 }
 .game:hover {
-	background-color:steelblue;
-	color:#fff;
+	background-color:#f1f1f1;
+	cursor:pointer;
 }
 .game h4 {
 	font-weight:700;
@@ -69,7 +69,6 @@
 	color:steelblue;
 }
 .game:hover .date {
-	color:#fff;
 }
 .game .match {
 	margin:20px auto;

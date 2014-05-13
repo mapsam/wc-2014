@@ -53,9 +53,6 @@ function init() {
     }
 	}
 
-
-
-
 	var date = '6/12';
 	showLayer(date);
 
@@ -98,9 +95,25 @@ function init() {
 	});
 
 	// hover actions on specific games in sidebar
-	$('body').on('mouseover', '.game', function(){
-		id = $(this).attr('id').slice(6);
-		console.log(id);
+	$('body').on('click', '.game', function(){
+		id = parseInt($(this).attr('id').slice(6));
+		map.eachLayer(function(m) {
+			var l = m._layers;
+			if(l) {
+				for (var key in l) {
+					mid=l[key].feature.properties.matchid;
+					if (id===l[key].feature.properties.matchid) {
+						console.log(id, mid);
+						map.panTo(l[key]._latlng);
+						console.log(l[key].options.color);
+						l[key].options.color = '#000000';
+						date.update(l[key]);
+						
+						
+					}
+				}
+			}
+		});
 	});
 }
 
