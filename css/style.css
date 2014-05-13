@@ -3,6 +3,17 @@
 	padding:0;
 	font-family:arial, sans-serif;
 }
+.cf:before,
+.cf:after {
+    content:" ";
+    display:table;
+}
+.cf:after {
+    clear:both;
+}
+.cf {
+    *zoom:1;
+}
 /* who needs a reset? */
 #map {
 	position:absolute;
@@ -31,12 +42,15 @@
 	-moz-box-sizing:border-box; 
 	-webkit-box-sizing:border-box;
 }
+
+
 .game {
 	padding:10px;
 	box-sizing:border-box;  
 	-moz-box-sizing:border-box; 
 	-webkit-box-sizing:border-box;
 	border-bottom:1px solid #e5e5e5;
+	color:#444;
 }
 .game:first-child {
 	border-top:1px solid #e5e5e5;
@@ -45,6 +59,46 @@
 	background-color:steelblue;
 	color:#fff;
 }
+.game h4 {
+	font-weight:700;
+	font-size:.75em;
+	text-transform:uppercase;
+}
+.game .date {
+	float:right;
+	color:steelblue;
+}
+.game:hover .date {
+	color:#fff;
+}
+.game .match {
+	margin:20px auto;
+	width:85%;
+}
+.team-one,
+.team-two {
+	text-align:center;
+	color:#c0c0c0;
+	font-size:.8em;
+	width:40%;
+}
+.game .match .team-one {
+	float:left;
+}
+.game .match .team-two {
+	float:right;
+}
+.match .vs {
+	position:absolute;
+	width:30px;
+	left:50%;
+	margin-left:-10px;
+	margin-top:15px;
+	color:#999;
+	font-weight:700;
+}
+
+
 #dates li {
 	display:inline;
 }

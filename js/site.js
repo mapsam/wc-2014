@@ -1,5 +1,10 @@
 function init() {
 
+	// get user's timezone info
+	var d = new Date();
+	var n = d.getTimezoneOffset();
+	console.log(d, n);
+
 	// map init variables
 	var southWest = L.latLng(-31.108604, -78.637069),
 			northEast = L.latLng(9.121200, -19.018984),
@@ -23,7 +28,7 @@ function init() {
 	L.geoJson(geojson, { 
 		onEachFeature: onEachFeature,
 		pointToLayer: function(feature, latlng) {
-			return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.8, color: '#4682b4'});
+			return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.8, color: '#cc0000'});
 		}
 	});
 	
@@ -60,10 +65,11 @@ function init() {
 		for(key in game._layers) {
 			var d = game._layers[key].feature.properties;
 			var info = '';
-			info += '<div class="game" id="match-'+d['matchid']+'"><h4>Game '+d['matchid']+'</h4><p class="date">'+d.day+' '+d.date+' <span class="time">'+d.time+'</p>';
+			info += '<div class="game" id="match-'+d['matchid']+'"><h4>Game '+d['matchid']+'<span class="date">'+d.day+' '+d.date+'</span></h4>';
+			info += '<div class="match"><div class="team-one"><img src="flags/'+d.teamAabbr+'.svg" width="60" height="auto"><br>'+d.teamA+'</div><div class="vs">vs</div><div class="team-two"><img src="flags/'+d.teamBabbr+'.svg" width="60" height="auto"><br>'+d.teamB+'</div><div class="cf"></div></div>';
+			info += '<p class="time">'+d.time+'</p>';
 			info += '</div>';
 			document.getElementById('info').innerHTML += info;
-			console.log(info);
 		}
 		// add layer properties to #info section
 	}
@@ -87,7 +93,14 @@ function init() {
 			date = $(this).text();
 			// add the layer based off the 
 			showLayer(date);
+			
 		}
+	});
+
+	// hover actions on specific games in sidebar
+	$('body').on('mouseover', '.game', function(){
+		id = $(this).attr('id').slice(6);
+		console.log(id);
 	});
 }
 
