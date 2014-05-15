@@ -21,7 +21,7 @@ function init() {
 		zoomControl: false
 	}
 
-	var map = L.map('map', mapOptions);
+	window.map = L.map('map', mapOptions);
 
 	games = [];
 
@@ -33,10 +33,14 @@ function init() {
 	});
 	
 	// geojson styles
-	var styles = {
-		'color': '#4682b4',
-		'weight': 0
-	}
+	// var styleDefault = {
+	// 	'color': '#cc0000',
+	// 	'weight': 0,
+	// 	'fillOpacity': 0.8
+	// }
+	// var styleHighlight = {
+	// 	''
+	// }
 
 	// feature looping and interaction
 	function onEachFeature(feature, layer) {
@@ -94,6 +98,9 @@ function init() {
 		}
 	});
 
+	// styles
+
+
 	// hover actions on specific games in sidebar
 	$('body').on('click', '.game', function(){
 		id = parseInt($(this).attr('id').slice(6));
@@ -101,15 +108,13 @@ function init() {
 			var l = m._layers;
 			if(l) {
 				for (var key in l) {
+					l[key].setStyle({weight:0});
 					mid=l[key].feature.properties.matchid;
 					if (id===l[key].feature.properties.matchid) {
 						console.log(id, mid);
 						map.panTo(l[key]._latlng);
 						console.log(l[key].options.color);
-						l[key].options.color = '#000000';
-						date.update(l[key]);
-						
-						
+						l[key].setStyle({weight: 20});					
 					}
 				}
 			}
