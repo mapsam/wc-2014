@@ -17,46 +17,52 @@ function init() {
 		maxBounds: bounds,
 		layers: [tiles],
 		center: L.latLng(-15.7833, -47.8667),
-		zoom: 5,
+		zoom: 4,
 		zoomControl: false
 	}
 
 	window.map = L.map('map', mapOptions);
+
 
 	games = [];
 
 	L.geoJson(geojson, { 
 		onEachFeature: onEachFeature,
 		pointToLayer: function(feature, latlng) {
-			return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.8, color: '#cc0000'});
+			return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.8, color: '#b2497d', className: 'game-point'});
 		}
 	});
 	
-	// geojson styles
-	// var styleDefault = {
-	// 	'color': '#cc0000',
-	// 	'weight': 0,
-	// 	'fillOpacity': 0.8
-	// }
-	// var styleHighlight = {
-	// 	''
-	// }
+	// point styles used on mouseenter and mouseleave
+	var styleDefault = {
+		'radius': 10,
+		'color': '#b2497d',
+		'weight': 0,
+		'fillOpacity': 0.8
+	}
+	var styleHighlight = {
+		'radius': 10,
+		'color': '#32cd32',
+		'weight': 10,
+		'fillOpacity': 0.8
+	}
 
 	// feature looping and interaction
 	function onEachFeature(feature, layer) {
-    var gg = games[feature.properties.date];
-    if (gg === undefined) {
-        gg = new L.layerGroup();
-        games[feature.properties.date] = gg;
-    }
+	    var gg = games[feature.properties.date];
+	    if (gg === undefined) {
+	        gg = new L.layerGroup();
+	        games[feature.properties.date] = gg;
+	    }
     gg.addLayer(layer);
 
     var g = feature.properties;
-    if (g && g.matchid) {
-        layer.bindPopup(g.date + '<br><p><strong>' + g.teamA + '</strong> vs. <strong>' + g.teamB +'</strong></p>');
-    }
+	    if (g && g.matchid) {
+	        layer.bindPopup(g.date + '<br><p><strong>' + g.teamA + '</strong> vs. <strong>' + g.teamB +'</strong></p>');
+	    }
 	}
 
+	// start date used to initiate the first layer group
 	var date = '6/12';
 	showLayer(date);
 
@@ -66,9 +72,8 @@ function init() {
 		for(key in game._layers) {
 			var d = game._layers[key].feature.properties;
 			var info = '';
-			info += '<div class="game" id="match-'+d['matchid']+'"><h4>Game '+d['matchid']+'<span class="date">'+d.day+' '+d.date+'</span></h4>';
+			info += '<div class="game" id="match-'+d['matchid']+'"><h4>Game '+d['matchid']+'<span class="date">'+d.time+'</span></h4>';
 			info += '<div class="match"><div class="team-one"><img src="flags/'+d.teamAabbr+'.svg" width="60" height="auto"><br>'+d.teamA+'</div><div class="vs">vs</div><div class="team-two"><img src="flags/'+d.teamBabbr+'.svg" width="60" height="auto"><br>'+d.teamB+'</div><div class="cf"></div></div>';
-			info += '<p class="time">'+d.time+'</p>';
 			info += '</div>';
 			document.getElementById('info').innerHTML += info;
 		}
@@ -98,24 +103,30 @@ function init() {
 		}
 	});
 
-	// styles
-
-
 	// hover actions on specific games in sidebar
-	$('body').on('click', '.game', function(){
+	$('body').on('mouseenter', '.game', function(){
 		id = parseInt($(this).attr('id').slice(6));
 		map.eachLayer(function(m) {
 			var l = m._layers;
 			if(l) {
 				for (var key in l) {
-					l[key].setStyle({weight:0});
 					mid=l[key].feature.properties.matchid;
 					if (id===l[key].feature.properties.matchid) {
 						console.log(id, mid);
-						map.panTo(l[key]._latlng);
+						// map.panTo(l[key]._latlng);
 						console.log(l[key].options.color);
-						l[key].setStyle({weight: 20});					
+						l[key].setStyle(styleHighlight);					
 					}
+				}
+			}
+		});
+	});
+	$('body').on('mouseleave', '.game', function(){
+		map.eachLayer(function(m) {
+			var l = m._layers;
+			if(l) {
+				for (var key in l) {
+					l[key].setStyle(styleDefault);
 				}
 			}
 		});
